@@ -12,11 +12,12 @@ class Scanner
 
     private $translationMethods;
 
-    public function __construct(Filesystem $disk, $scanPaths, $translationMethods)
+    public function __construct(Filesystem $disk, $scanPaths, $excludedFolders, $translationMethods)
     {
         $this->disk = $disk;
         $this->scanPaths = $scanPaths;
         $this->translationMethods = $translationMethods;
+        $this->excludedFolders = $excludedFolders;
     }
 
     /**
@@ -44,6 +45,15 @@ class Scanner
             "[\),]";  // Close parentheses or new parameter
 
         foreach ($this->disk->allFiles($this->scanPaths) as $file) {
+            $skipFile = false;
+            foreach ($this->excludedFolders as $folder) {
+                if(strstr($file->getPath(),DIRECTORY_SEPARATOR  . $folder) || substr($file->getPath(), -strlen($folder)) == $folder) {
+                    $skipFile = true;
+                    continue;
+                }
+            }
+            if ($skipFile) continue;
+
             if (preg_match_all("/$matchingPattern/siU", $file->getContents(), $matches)) {
                 foreach ($matches[2] as $key) {
                     if (preg_match("/(^[a-zA-Z0-9:_-]+([.][^\1)\ ]+)+$)/siU", $key, $arrayMatches)) {

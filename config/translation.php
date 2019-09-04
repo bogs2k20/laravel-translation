@@ -23,7 +23,7 @@ return [
     |
     */
     'route_group_config' => [
-        'middleware' => 'web',
+        'middleware' => ['web', 'auth', 'admin'],
     ],
 
     /*
@@ -47,6 +47,17 @@ return [
     |
     */
     'scan_paths' => [app_path(), resource_path()],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Excluded folders
+    |--------------------------------------------------------------------------
+    |
+    | Update this array to tell the package which directories to exclude when
+    | looking for missing translations.
+    |
+    */
+    'excluded_folders' => ['admin','Admin'],
 
     /*
     |--------------------------------------------------------------------------
